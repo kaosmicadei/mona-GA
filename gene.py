@@ -5,7 +5,10 @@ class Gene:
   def __init__(self, num_vertices, width, height):
     self.width = width
     self.height = height
+
     self.rgba = list(random.rand(4))
+
+    self.num_vertices = num_vertices
     self.vertices = []
     
     for _ in xrange(num_vertices):
@@ -14,18 +17,21 @@ class Gene:
       self.vertices.append((x, y))
 
 
-  def mutate_rgba(self, sigma):
-    self.rgba += sigma * sigma * random.randn(4)
+  def mutate_rgba(self, delta):
+    elem = random.randint(0,4)
+    
+    new_value = self.rgba[elem] + delta * delta * random.randn()
+    new_value = max(0, min(1, new_value))
 
-    self.rgba = map(lambda x: max(0, min(1, x)), self.rgba)
+    self.rgba[elem] = new_value
 
     
-  def mutate_shape(self, sigma):
-    for i,_ in enumerate(self.vertices):
-      x = self.vertices[i][0] + sigma * random.randn() * self.width
+  def mutate_shape(self, delta):
+    for i in xrange(self.num_vertices):
+      x = self.vertices[i][0] + delta * random.randn() * self.width
       x = max(0, min(self.width, x))
 
-      y = self.vertices[i][1] + sigma * random.randn() * self.height
+      y = self.vertices[i][1] + delta * random.randn() * self.height
       y = max(0, min(self.height, y))
 
       self.vertices[i] = (x,y)

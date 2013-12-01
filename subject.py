@@ -8,15 +8,18 @@ class Subject:
   def __init__(self, num_genes, num_vertices, width, height):
     self.width = width
     self.height = height
+    self.num_genes = num_genes
     self.dna = []
 
     for _ in xrange(num_genes):
-      self.dna.append(Gene(num_vertices, width, height))
+      gene = Gene(num_vertices, width, height)
+      
+      self.dna.append(gene)
 
 
-  def mutate(self, sigma):
+  def mutate(self, delta):
     for i,_ in enumerate(self.dna):
-      self.dna[i].mutate_rgba(sigma) if random.random() < 0.5 else self.dna[i].mutate_shape(sigma)
+      self.dna[i].mutate_rgba(delta) if random.random() < 0.5 else self.dna[i].mutate_shape(delta)
 
 
   def fitness(self, goal):
@@ -47,3 +50,21 @@ class Subject:
       context.fill()
 
     return surface
+
+
+  def save(self, output):
+    self.draw().write_to_png(output)
+    
+    
+class Child(Subject):
+  def __init__(self, parent1, parent2, mutate_rate, delta):
+    self.width = parent1.width
+    self.height = parent1.height
+    self.num_genes = parent1.num_genes
+    
+    cut = self.num_genes / 2
+
+    self.dna = parent1.dna[:cut] + parent2.dna[cut:]
+
+    if random.random() < mutate_rate:
+      self.mutate(delta)

@@ -1,4 +1,6 @@
 from population import *
 
 
-print Population("example.png", 10).pop_fitness()
+pop = Population("example.png", 30)
+
+pop.evolve()
